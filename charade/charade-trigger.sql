@@ -36,7 +36,7 @@ BEGIN
 
 	IF @isCorrect = 1 AND EXISTS (SELECT 1 FROM multipleChoice WHERE charadeID = @charadeID AND isCorrect = 1)
 	BEGIN
-		RAISERROR ("There's already a correct option for this charade.", 16, 1);
+		RAISERROR ('There is already a correct option for this charade.', 16, 1);
 		ROLLBACK TRANSACTION;
 		RETURN;
 	END;
