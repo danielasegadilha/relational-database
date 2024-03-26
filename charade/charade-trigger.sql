@@ -24,12 +24,19 @@ BEGIN
         BEGIN
             THROW 50000, 'Invalid entry: only multiple choice riddles can have multiple choice options', 1;
         END
-
+	
+	IF (SELECT COUNT(*) FROM inserted WHERE isCorrect = 1 AND charadeID = @charadeID ) > 1    
+	BEGIN     
+		RAISERROR ('Only one correct option is allowed per charade.', 16, 1);     
+		ROLLBACK TRANSACTION;     
+		RETURN;    
+	END 
+		
 	SELECT charadeID FROM inserted WHERE isCorrect = 1;
 
 	IF @isCorrect = 1 AND EXISTS (SELECT 1 FROM multipleChoice WHERE charadeID = @charadeID AND isCorrect = 1)
 	BEGIN
-		RAISERROR ('Only one correct option is allowed per charade.', 16, 1);
+		RAISERROR ("There's already a correct option for this charade.", 16, 1);
 		ROLLBACK TRANSACTION;
 		RETURN;
 	END;
